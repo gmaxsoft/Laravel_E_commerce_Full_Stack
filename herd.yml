@@ -1,0 +1,4 @@
+name: Laravel_E_commerce
+php: '8.3'
+aliases:
+  - laravel-e-commerce.test

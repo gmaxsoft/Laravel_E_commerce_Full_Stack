@@ -1,0 +1,43 @@
+<?php
+
+namespace Tests\Feature\Auth;
+
+use App\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\URL;
+use Tests\TestCase;
+
+class EmailVerificationTest extends TestCase
+{
+    use RefreshDatabase;
+
+    public function test_email_can_be_verified(): void
+    {
+        $user = User::factory()->unverified()->create();
+
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => sha1($user->email)]
+        );
+
+        $response = $this->actingAs($user, 'web')->get($verificationUrl);
+
+        $response->assertRedirect(config('app.frontend_url').'/dashboard?verified=1');
+    }
+
+    public function test_email_is_not_verified_with_invalid_hash(): void
+    {
+        $user = User::factory()->unverified()->create();
+
+        $verificationUrl = URL::temporarySignedRoute(
+            'verification.verify',
+            now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => sha1('wrong-email')]
+        );
+
+        $this->actingAs($user, 'web')->get($verificationUrl);
+
+        $this->assertFalse($user->fresh()->hasVerifiedEmail());
+    }
+}
