@@ -248,11 +248,34 @@ POST   /api/webhooks/tpay
 
 ## 🧪 Testy
 
+### Backend
+
 Projekt używa SQLite in-memory w testach:
 
 ```bash
 php artisan test
 ```
+
+### Frontend
+
+Testy jednostkowe używają Vitest i React Testing Library:
+
+```bash
+cd frontend
+npm test              # Uruchom wszystkie testy
+npm run test:ui       # Uruchom testy z UI
+npm run test:coverage # Uruchom testy z pokryciem kodu
+```
+
+## 🔄 CI/CD (GitHub Actions)
+
+Projekt wykorzystuje GitHub Actions do automatycznego uruchamiania testów i walidacji kodu przy każdym push i pull request:
+
+- **Laravel (Backend)** – Uruchamia testy PHP z SQLite in-memory
+- **Laravel Pint** – Sprawdza formatowanie kodu zgodnie ze standardami Laravel
+- **Frontend (React)** – Uruchamia ESLint i build aplikacji React
+
+Workflow jest zdefiniowany w `.github/workflows/ci.yml` i automatycznie uruchamia się dla branchy `main` i `master`.
 
 ## 📝 Przydatne komendy
 
